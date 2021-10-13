@@ -1,0 +1,7 @@
+PROGRAM code1
+  USE quad
+  IMPLICIT NONE
+
+  CALL setInt
+
+END PROGRAM code1
