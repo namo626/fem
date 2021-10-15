@@ -35,4 +35,55 @@ CONTAINS
 
   END SUBROUTINE setInt
 
+  REAL FUNCTION gaussQuad(g, x1, x2, nl)
+    IMPLICIT NONE
+    REAL :: g
+    REAL, INTENT(IN) :: x1
+    REAL, INTENT(IN) :: x2
+    integer, intent(in) :: nl
+    integer i
+
+    gaussQuad = 0.
+    do i = 1,Nl
+       gaussQuad = gaussQuad + g(x1 + 0.5*(x2-x1)*(1+XI(i,Nl))) * W(i,Nl)
+    end do
+    gaussQuad = gaussQuad * 0.5 * (x2 - x1)
+
+  END FUNCTION gaussQuad
+
+  subroutine Shape(xi, N, PSI, DPSI)
+    implicit none
+    real, intent(in) :: xi
+    integer, intent(in) :: N
+    real, intent(out) :: psi(N), dpsi(N)
+
+    if (N .gt. 3) then
+       print *, 'N must be < 3; only accept linear and quadratic shape functions'
+       stop
+    end if
+
+    if (abs(xi) > 1) then
+       print *, 'Xi must be in [-1,1] in the master element'
+       stop
+    end if
+
+    ! linear shape functions
+    if (N .eq. 2) then
+       PSI(1) = 0.5 * (1. - xi)
+       PSI(2) = 0.5 * (1. + xi)
+       DPSI(1) = -0.5
+       DPSI(2) = 0.5
+    end if
+
+    if (N .eq. 3) then
+       PSI(1) = xi * (xi - 1.) * 0.5
+       PSI(2) = 1. - XI**2
+       PSI(3) = xi * (xi+1.) * 0.5
+       DPSI(1) = xi - 0.5
+       DPSI(2) = -2.*xi
+       DPSI(3) = xi + .5
+    end if
+
+  end subroutine Shape
+
 END MODULE QUAD
