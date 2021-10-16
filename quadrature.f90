@@ -1,4 +1,5 @@
 MODULE QUAD
+  use material
   IMPLICIT NONE
 
   REAL :: XI(4,4), W(4,4)
@@ -85,5 +86,35 @@ CONTAINS
     end if
 
   end subroutine Shape
+
+  subroutine Elem(x1, x2, N, EK, EF, Nl, mat)
+    implicit none
+    real, intent(in) :: x1, x2
+    integer, intent(in) :: N, Nl, mat
+    real, intent(out) :: EK(N,N), EF(N)
+    real :: x, dx, xk, xc, xb, xf, PSI(N), DPSI(N)
+    integer i,j,l
+
+    dx = (x2 - x1) / 2.
+    EK = 0.
+    EF = 0.
+
+    ! begin integration
+    do l = 1,Nl
+       x = x1 + (1. + XI(l,Nl)) * dx
+       call Getmat(mat, x, xk, xc, xb, xf)
+       call Shape(XI(l,Nl), N, PSI, DPSI)
+
+       do i = 1,N
+          EF(i) = EF(i) + PSI(i) * xf* W(l,Nl) * dx
+
+          do j = 1,N
+             EK(i,j) = EK(i,j) + W(l,Nl)*dx*(xk*DPSI(i)*DPSI(j)/(dx**2) + &
+              xc*PSI(i)*DPSI(j)/dx + xb*PSI(i)*PSI(j))
+          end do
+       end do
+    end do
+  end subroutine Elem
+
 
 END MODULE QUAD

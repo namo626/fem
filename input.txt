@@ -1,0 +1,6 @@
+10 ! Number of nodes
+9 ! Number of elements
+1 ! Material number
+0 ! Number of point loads
+1.0 10.0 ! x1 x2
+

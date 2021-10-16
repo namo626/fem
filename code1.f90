@@ -1,6 +1,9 @@
 PROGRAM code1
+  use global
   USE quad
   USE testFunctions
+  use prepmod
+
   IMPLICIT NONE
 
   REAL :: y, z, z2
@@ -21,5 +24,8 @@ PROGRAM code1
   call Shape(0.111192, N, PSI, DPSI)
   print *, 'a = ', sum(PSI)
   print *, 'b = ', sum(DPSI)
+
+  ! test reading functions
+  call Prep
 
 END PROGRAM code1
